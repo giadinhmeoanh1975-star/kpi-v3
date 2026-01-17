@@ -347,3 +347,15 @@ export const adminApi = {
 };
 
 export { ApiError };
+
+export const api = {
+  auth: authApi,
+  danhMuc: danhMucApi,
+  keKhai: keKhaiApi,
+  pheDuyet: pheDuyetApi,
+  nhiemVu: nhiemVuApi,
+  tieuChi: tieuChiApi,
+  nghiPhep: nghiPhepApi,
+  kpi: kpiApi,
+  admin: adminApi,
+};
