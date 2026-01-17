@@ -3,8 +3,9 @@ import { useAuthStore } from '../store'
 import { api } from '../api'
 import { Button, Card, Input, Alert } from '../components/ui'
 
-export default function ProfilePage() {
-  const { user, setUser } = useAuthStore()
+// Sửa thành export function (Named Export)
+export function ProfilePage() {
+  const { user } = useAuthStore()
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -32,10 +33,10 @@ export default function ProfilePage() {
 
     try {
       setSubmitting(true)
-      await api.post('/auth/change-password', {
-        mat_khau_cu: passwordForm.mat_khau_cu,
-        mat_khau_moi: passwordForm.mat_khau_moi,
-      })
+      await api.auth.changePassword(
+        passwordForm.mat_khau_cu,
+        passwordForm.mat_khau_moi
+      )
       setSuccess('Đổi mật khẩu thành công')
       setPasswordForm({
         mat_khau_cu: '',
@@ -43,7 +44,7 @@ export default function ProfilePage() {
         xac_nhan_mat_khau: '',
       })
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Lỗi đổi mật khẩu')
+      setError(err.message || 'Lỗi đổi mật khẩu')
     } finally {
       setSubmitting(false)
     }

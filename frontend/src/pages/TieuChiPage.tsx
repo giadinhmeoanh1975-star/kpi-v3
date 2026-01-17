@@ -14,7 +14,8 @@ interface TieuChiChung {
   created_at: string
 }
 
-export default function TieuChiPage() {
+// Sửa thành Named Export
+export function TieuChiPage() {
   const [tieuChis, setTieuChis] = useState<TieuChiChung[]>([])
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -43,10 +44,15 @@ export default function TieuChiPage() {
   const loadData = async () => {
     try {
       setLoading(true)
-      const res = await api.get('/tieu-chi/cua-toi')
-      setTieuChis(res.data)
+      const res = await api.tieuChi.getMyTieuChi()
+      // API có thể trả về null hoặc object, bọc vào mảng nếu cần
+      if (res) {
+          setTieuChis([res]) // Giả sử API trả về 1 object cho tháng hiện tại
+      } else {
+          setTieuChis([])
+      }
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Lỗi tải dữ liệu')
+      setError(err.message || 'Lỗi tải dữ liệu')
     } finally {
       setLoading(false)
     }
@@ -82,14 +88,14 @@ export default function TieuChiPage() {
         diem_cham_cong: diemChamCong,
         diem_ky_luat: diemKyLuat,
         diem_phoi_hop: diemPhoiHop,
-        ghi_chu: form.ghi_chu || null,
+        ghi_chu: form.ghi_chu || '',
       }
 
       if (editingId) {
-        await api.put(`/tieu-chi/${editingId}`, payload)
+        await api.tieuChi.update(editingId, payload)
         setSuccess('Cập nhật tiêu chí thành công')
       } else {
-        await api.post('/tieu-chi', payload)
+        await api.tieuChi.create(payload)
         setSuccess('Tạo tiêu chí thành công')
       }
       
@@ -97,7 +103,7 @@ export default function TieuChiPage() {
       resetForm()
       loadData()
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Lỗi lưu tiêu chí')
+      setError(err.message || 'Lỗi lưu tiêu chí')
     } finally {
       setSubmitting(false)
     }
